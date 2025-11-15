@@ -1,5 +1,8 @@
 .dashboard {
   width: 100%;
+  background-color: var(--color-gray-bg);
+  min-height: calc(100vh - 80px);
+  padding: 2rem 0;
 }
 
 .dashboard-title {
@@ -18,8 +21,15 @@
 .dashboard-section {
   background-color: var(--color-white);
   border: 1px solid var(--color-gray-light);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.dashboard-section:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-gray-hover);
 }
 
 .dashboard-section.full-width {

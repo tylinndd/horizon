@@ -1,5 +1,8 @@
 .alerts-page {
   width: 100%;
+  background-color: var(--color-gray-bg);
+  min-height: calc(100vh - 80px);
+  padding: 2rem 0;
 }
 
 .alerts-header {

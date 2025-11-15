@@ -7,6 +7,10 @@
   --color-gray-light: #f5f5f5;
   --color-gray: #737373;
   --color-gray-dark: #404040;
+  --color-gray-bg: #e8e8e8;
+  --color-gray-hover: #d4d4d4;
+  --color-orange: #f97316; /* High risk - more distinct from critical */
+  --color-yellow-light: #facc15; /* Medium risk - lighter yellow */
 }
 
 * {
@@ -21,7 +25,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-white);
+  background-color: var(--color-gray-bg);
   color: var(--color-black);
 }
 

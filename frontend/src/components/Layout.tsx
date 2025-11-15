@@ -21,6 +21,12 @@ export default function Layout({ children }: LayoutProps) {
               to="/"
               className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
             >
+              Home
+            </Link>
+            <Link
+              to="/dashboard"
+              className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+            >
               Dashboard
             </Link>
             <Link

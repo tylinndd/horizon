@@ -13,7 +13,7 @@ export default function AlertCard({ alert }: AlertCardProps) {
       case 'high':
         return 'var(--color-red-light)'
       case 'medium':
-        return '#f59e0b'
+        return '#facc15'
       default:
         return 'var(--color-gray)'
     }

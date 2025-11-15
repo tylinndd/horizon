@@ -1,5 +1,8 @@
 .risk-map-page {
   width: 100%;
+  background-color: var(--color-gray-bg);
+  min-height: calc(100vh - 80px);
+  padding: 2rem 0;
 }
 
 .risk-map-container {
@@ -11,9 +14,16 @@
 .map-placeholder {
   background-color: var(--color-white);
   border: 1px solid var(--color-gray-light);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 2rem;
   min-height: 600px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.map-placeholder:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-gray-hover);
 }
 
 .map-grid {
@@ -74,11 +84,19 @@
 .region-details {
   background-color: var(--color-white);
   border: 1px solid var(--color-gray-light);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
   height: fit-content;
   position: sticky;
   top: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.region-details:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-gray-hover);
 }
 
 .details-title {
@@ -113,20 +131,44 @@
   color: var(--color-black);
 }
 
-.close-details {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: var(--color-black);
-  color: var(--color-white);
+.close-outbreak {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
   border: none;
-  border-radius: 4px;
-  font-weight: 600;
+  font-size: 2rem;
   cursor: pointer;
-  transition: background-color 0.2s;
+  color: var(--color-gray-dark);
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.close-details:hover {
-  background-color: var(--color-gray-dark);
+.close-outbreak:hover {
+  color: var(--color-black);
+}
+
+.outbreak-type {
+  color: var(--color-red);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.outbreak-description {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-gray-light);
+}
+
+.outbreak-description p {
+  color: var(--color-gray-dark);
+  line-height: 1.6;
+  margin: 0;
 }
 
 @media (max-width: 1024px) {

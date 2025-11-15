@@ -11,9 +11,9 @@ export default function RiskScoreCard({ score }: RiskScoreCardProps) {
       case 'critical':
         return 'var(--color-red)'
       case 'high':
-        return 'var(--color-red-light)'
+        return 'var(--color-orange)' // Orange - more distinct
       case 'medium':
-        return '#f59e0b'
+        return '#facc15' // Lighter yellow
       default:
         return 'var(--color-gray)'
     }

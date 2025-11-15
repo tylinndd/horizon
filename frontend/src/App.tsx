@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
+import Homepage from './pages/Homepage'
 import Dashboard from './pages/Dashboard'
 import Alerts from './pages/Alerts'
 import RiskMap from './pages/RiskMap'
@@ -10,7 +11,8 @@ function App() {
     <Router>
       <Layout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Homepage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/alerts" element={<Alerts />} />
           <Route path="/map" element={<RiskMap />} />
         </Routes>

@@ -7,11 +7,48 @@ interface RiskScore {
   region_id: string
   risk_probability: number
   risk_level: string
+  contributing_factors?: string
+}
+
+interface OutbreakInfo {
+  region: string
+  type: string
+  description: string
+  riskLevel: string
+}
+
+// Mock outbreak types based on region
+const getOutbreakInfo = (region: string, riskLevel: string, factors?: string): OutbreakInfo => {
+  const outbreaks: { [key: string]: string[] } = {
+    'US-CA': ['Influenza-like illness', 'Respiratory syncytial virus', 'COVID-19 variant'],
+    'US-NY': ['Seasonal flu', 'Norovirus', 'Respiratory infections'],
+    'US-TX': ['Dengue fever', 'West Nile virus', 'Respiratory illness'],
+    'US-FL': ['Dengue fever', 'Zika virus', 'Respiratory syncytial virus'],
+    'US-IL': ['Influenza', 'Respiratory infections', 'Gastrointestinal illness']
+  }
+  
+  const types = outbreaks[region] || ['Respiratory illness', 'Seasonal flu', 'General outbreak']
+  const randomType = types[Math.floor(Math.random() * types.length)]
+  
+  let description = `Elevated cases of ${randomType.toLowerCase()} detected in ${region}.`
+  if (factors) {
+    description += ` ${factors}`
+  } else {
+    description += ' Increased hospital visits and pharmacy purchases indicate potential outbreak.'
+  }
+  
+  return {
+    region,
+    type: randomType,
+    description,
+    riskLevel
+  }
 }
 
 export default function RiskMap() {
   const [riskScores, setRiskScores] = useState<RiskScore[]>([])
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
+  const [selectedOutbreak, setSelectedOutbreak] = useState<OutbreakInfo | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -34,9 +71,9 @@ export default function RiskMap() {
       case 'critical':
         return '#dc2626'
       case 'high':
-        return '#ef4444'
+        return '#f97316' // Orange - more distinct from critical
       case 'medium':
-        return '#f59e0b'
+        return '#facc15' // Lighter yellow
       case 'low':
         return '#737373'
       default:
@@ -67,7 +104,11 @@ export default function RiskMap() {
                   backgroundColor: getRiskColor(score.risk_level),
                   opacity: selectedRegion && selectedRegion !== score.region_id ? 0.3 : 1
                 }}
-                onClick={() => setSelectedRegion(score.region_id)}
+                onClick={() => {
+                  setSelectedRegion(score.region_id)
+                  const outbreakInfo = getOutbreakInfo(score.region_id, score.risk_level, score.contributing_factors)
+                  setSelectedOutbreak(outbreakInfo)
+                }}
               >
                 <div className="region-label">{score.region_id}</div>
                 <div className="region-risk">{(score.risk_probability * 100).toFixed(0)}%</div>
@@ -80,11 +121,11 @@ export default function RiskMap() {
               <span>Critical</span>
             </div>
             <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#ef4444' }}></div>
+              <div className="legend-color" style={{ backgroundColor: '#f97316' }}></div>
               <span>High</span>
             </div>
             <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#f59e0b' }}></div>
+              <div className="legend-color" style={{ backgroundColor: '#facc15' }}></div>
               <span>Medium</span>
             </div>
             <div className="legend-item">
@@ -94,10 +135,18 @@ export default function RiskMap() {
           </div>
         </div>
 
-        {selectedScore && (
+        {selectedScore && selectedOutbreak && (
           <div className="region-details">
+            <button className="close-outbreak" onClick={() => {
+              setSelectedRegion(null)
+              setSelectedOutbreak(null)
+            }}>×</button>
             <h2 className="details-title">{selectedScore.region_id}</h2>
             <div className="details-content">
+              <div className="detail-item">
+                <span className="detail-label">Outbreak Type:</span>
+                <span className="detail-value outbreak-type">{selectedOutbreak.type}</span>
+              </div>
               <div className="detail-item">
                 <span className="detail-label">Risk Level:</span>
                 <span className={`detail-value risk-${selectedScore.risk_level}`}>
@@ -111,12 +160,9 @@ export default function RiskMap() {
                 </span>
               </div>
             </div>
-            <button
-              className="close-details"
-              onClick={() => setSelectedRegion(null)}
-            >
-              Close
-            </button>
+            <div className="outbreak-description">
+              <p>{selectedOutbreak.description}</p>
+            </div>
           </div>
         )}
       </div>
