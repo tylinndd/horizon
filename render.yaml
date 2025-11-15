@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: horizon-backend
+    env: python
+    buildCommand: cd backend && chmod +x render-build.sh && ./render-build.sh
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: horizon-db
+          property: connectionString
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: openai/gpt-4o-mini
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://horizon-frontend.onrender.com
+
+  - type: web
+    name: horizon-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://horizon-backend.onrender.com/api
+
+databases:
+  - name: horizon-db
+    databaseName: horizon
+    user: horizon
+    plan: free
+
