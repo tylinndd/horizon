@@ -20,6 +20,11 @@ export default function Alerts() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'unread' | 'critical'>('all')
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   useEffect(() => {
     loadAlerts()
   }, [filter])

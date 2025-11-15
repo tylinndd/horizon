@@ -5,10 +5,22 @@
 }
 
 .header {
-  background-color: var(--color-black);
+  background-color: transparent;
   color: var(--color-white);
   padding: 1rem 2rem;
+  border-bottom: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.header.scrolled {
+  background-color: rgba(0, 0, 0, 0.95);
   border-bottom: 3px solid var(--color-red);
+  backdrop-filter: blur(10px);
 }
 
 .header-content {
@@ -60,6 +72,14 @@
   width: 100%;
   margin: 0 auto;
   padding: 2rem;
+  margin-top: 80px;
+}
+
+.main-content-homepage {
+  flex: 1;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 @media (max-width: 768px) {

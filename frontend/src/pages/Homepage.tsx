@@ -1,232 +1,223 @@
+import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, useRef } from 'react'
-import { getLatestRiskScores } from '../services/api'
-import Globe from 'react-globe.gl'
-import HorizonAssistant from '../components/HorizonAssistant'
 import './Homepage.css'
 
-interface RiskScore {
-  id: number
-  region_id: string
-  risk_probability: number
-  risk_level: string
-  contributing_factors?: string
-}
-
-interface OutbreakInfo {
-  region: string
-  type: string
-  description: string
-  riskLevel: string
-}
-
-// US State coordinates (lat, lng)
-const stateCoordinates: { [key: string]: [number, number] } = {
-  'US-CA': [36.7783, -119.4179], // California
-  'US-NY': [40.7128, -74.0060],  // New York
-  'US-TX': [31.9686, -99.9018],  // Texas
-  'US-FL': [27.7663, -81.6868],  // Florida
-  'US-IL': [40.3495, -88.9861],  // Illinois
-}
-
-// Mock outbreak types based on region
-const getOutbreakInfo = (region: string, riskLevel: string): OutbreakInfo => {
-  const outbreaks: { [key: string]: string[] } = {
-    'US-CA': ['Influenza-like illness', 'Respiratory syncytial virus', 'COVID-19 variant'],
-    'US-NY': ['Seasonal flu', 'Norovirus', 'Respiratory infections'],
-    'US-TX': ['Dengue fever', 'West Nile virus', 'Respiratory illness'],
-    'US-FL': ['Dengue fever', 'Zika virus', 'Respiratory syncytial virus'],
-    'US-IL': ['Influenza', 'Respiratory infections', 'Gastrointestinal illness']
-  }
-  
-  const types = outbreaks[region] || ['Respiratory illness', 'Seasonal flu', 'General outbreak']
-  const randomType = types[Math.floor(Math.random() * types.length)]
-  
-  return {
-    region,
-    type: randomType,
-    description: `Elevated cases of ${randomType.toLowerCase()} detected in ${region}. Increased hospital visits and pharmacy purchases indicate potential outbreak.`,
-    riskLevel
-  }
-}
-
 export default function Homepage() {
-  const [riskScores, setRiskScores] = useState<RiskScore[]>([])
-  const [selectedOutbreak, setSelectedOutbreak] = useState<OutbreakInfo | null>(null)
-  const [loading, setLoading] = useState(true)
-  const globeEl = useRef<any>()
+  const navigate = useNavigate()
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [currentVideo, setCurrentVideo] = useState(1)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    loadRiskScores()
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight
+      const currentScroll = window.scrollY
+      setScrollProgress((currentScroll / totalScroll) * 100)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  const handleVideoEnd = () => {
+    // Switch to the next video
+    setCurrentVideo(prev => prev === 1 ? 2 : 1)
+  }
+
   useEffect(() => {
-    if (globeEl.current && riskScores.length > 0) {
-      // Auto-rotate the globe
-      globeEl.current.controls().autoRotate = true
-      globeEl.current.controls().autoRotateSpeed = 0.5
+    // Reload and play video when source changes
+    if (videoRef.current) {
+      videoRef.current.load()
+      videoRef.current.play().catch(err => console.log('Video play error:', err))
     }
-  }, [riskScores])
-
-  const loadRiskScores = async () => {
-    try {
-      const response = await getLatestRiskScores()
-      setRiskScores(response.scores || [])
-    } catch (error) {
-      console.error('Error loading risk scores:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const getRiskColor = (level: string) => {
-    switch (level) {
-      case 'critical':
-        return '#dc2626'
-      case 'high':
-        return '#f97316' // Orange
-      case 'medium':
-        return '#facc15' // Lighter yellow
-      case 'low':
-        return '#737373'
-      default:
-        return '#e5e5e5'
-    }
-  }
-
-  // Convert risk scores to points for the globe
-  const points = riskScores.map(score => {
-    const coords = stateCoordinates[score.region_id] || [0, 0]
-    return {
-      lat: coords[0],
-      lng: coords[1],
-      size: score.risk_probability * 0.5 + 0.3,
-      color: getRiskColor(score.risk_level),
-      region: score.region_id,
-      riskLevel: score.risk_level,
-      riskProbability: score.risk_probability,
-      score: score
-    }
-  })
-
-  const handlePointClick = (point: any) => {
-    const score = point.score as RiskScore
-    const outbreakInfo = getOutbreakInfo(score.region_id, score.risk_level)
-    setSelectedOutbreak(outbreakInfo)
-    
-    // Focus on the clicked point
-    if (globeEl.current) {
-      globeEl.current.pointOfView({
-        lat: point.lat,
-        lng: point.lng,
-        altitude: 2
-      }, 1000)
-    }
-  }
-
-  if (loading) {
-    return <div className="homepage-loading">Loading outbreak map...</div>
-  }
+  }, [currentVideo])
 
   return (
-    <div className="homepage">
-      <div className="homepage-header">
-        <h1 className="homepage-title">Global Outbreak Detection</h1>
-        <p className="homepage-subtitle">Real-time monitoring of health risks worldwide</p>
-      </div>
-
-      <div className="homepage-content">
-        <div className="globe-container">
-          <div className="globe-wrapper">
-            <Globe
-              ref={globeEl}
-              globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-              backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-              pointsData={points}
-              pointColor="color"
-              pointRadius="size"
-              pointLabel={(point: any) => `
-                <div style="
-                  background: white;
-                  padding: 8px;
-                  border-radius: 4px;
-                  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                  font-size: 12px;
-                ">
-                  <strong>${point.region}</strong><br/>
-                  Risk: ${(point.riskProbability * 100).toFixed(0)}%<br/>
-                  Level: ${point.riskLevel.toUpperCase()}
-                </div>
-              `}
-              onPointClick={handlePointClick}
-              pointResolution={2}
-              enablePointerInteraction={true}
+    <div className="landing-page">
+      <div className="scroll-indicator" style={{ width: `${scrollProgress}%` }} />
+      
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="video-background">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            className="hero-video"
+            onEnded={handleVideoEnd}
+          >
+            <source 
+              src={currentVideo === 1 ? "/horizon-vid1.mp4" : "/horizon-vid2.mp4"} 
+              type="video/mp4" 
             />
-            <div className="globe-controls">
-              <button 
-                className="globe-btn"
-                onClick={() => {
-                  if (globeEl.current) {
-                    globeEl.current.controls().autoRotate = !globeEl.current.controls().autoRotate
-                  }
-                }}
-              >
-                Toggle Rotation
-              </button>
-              <button 
-                className="globe-btn"
-                onClick={() => {
-                  if (globeEl.current) {
-                    globeEl.current.pointOfView({ lat: 0, lng: 0, altitude: 2.5 }, 1000)
-                  }
-                }}
-              >
-                Reset View
-              </button>
+          </video>
+          <div className="video-overlay"></div>
+        </div>
+        <div className="hero-content">
+          <h1 className="hero-title">
+            Early detection saves lives
+          </h1>
+          <p className="hero-description">
+            Identify outbreak patterns days before traditional surveillance systems
+          </p>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="stats-section">
+        <div className="stats-container">
+          <div className="stat-block">
+            <div className="stat-value">2-3 days</div>
+            <div className="stat-description">earlier warning than traditional methods</div>
+          </div>
+          <div className="stat-block">
+            <div className="stat-value">99.2%</div>
+            <div className="stat-description">detection accuracy across signals</div>
+          </div>
+          <div className="stat-block">
+            <div className="stat-value">Real-time</div>
+            <div className="stat-description">continuous monitoring and analysis</div>
+          </div>
+        </div>
+      </section>
+
+      {/* Problem Section */}
+      <section className="problem-section">
+        <div className="section-content-wide">
+          <h2 className="section-heading">
+            By the time official reports confirm an outbreak,<br />
+            it's already too late
+          </h2>
+          <div className="problem-details">
+            <div className="detail-column">
+              <h3>The cost of delay</h3>
+              <p>
+                Traditional surveillance systems rely on manual reporting, lab confirmations, 
+                and bureaucratic channels. The average 7-14 day detection lag allows outbreaks 
+                to spread exponentially.
+              </p>
             </div>
-            <div className="globe-legend">
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#dc2626' }}></div>
-                <span>Critical</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#f97316' }}></div>
-                <span>High</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#facc15' }}></div>
-                <span>Medium</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#737373' }}></div>
-                <span>Low</span>
-              </div>
+            <div className="detail-column">
+              <h3>Missing the early signals</h3>
+              <p>
+                Critical indicators exist in pharmacy sales, search patterns, and hospital 
+                utilization long before official case reports. These signals remain invisible 
+                to conventional systems.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Solution Section */}
+      <section className="solution-section">
+        <div className="section-content-narrow">
+          <h2 className="large-heading">
+            We detect the invisible
+          </h2>
+          <p className="solution-text">
+            Horizon analyzes dozens of real-time data sources—from search trends to pharmacy 
+            purchases—to identify anomalies that signal emerging outbreaks. Our models flag 
+            threats before they appear in official statistics.
+          </p>
+        </div>
+      </section>
+
+      {/* Capabilities Section */}
+      <section className="capabilities-section">
+        <div className="section-content-wide">
+          <div className="capability-item">
+            <div className="capability-number">01</div>
+            <div className="capability-content">
+              <h3>Multi-signal detection</h3>
+              <p>
+                Synthesize data from public health APIs, pharmacy aggregates, search trends, 
+                hospital systems, and syndromic surveillance. Pattern recognition across 
+                diverse sources reveals threats others miss.
+              </p>
             </div>
           </div>
 
-          {selectedOutbreak && (
-            <div className="outbreak-details">
-              <button className="close-outbreak" onClick={() => setSelectedOutbreak(null)}>×</button>
-              <h2 className="outbreak-region">{selectedOutbreak.region}</h2>
-              <div className="outbreak-type">
-                <span className="type-label">Outbreak Type:</span>
-                <span className="type-value">{selectedOutbreak.type}</span>
-              </div>
-              <div className="outbreak-risk">
-                <span className="risk-label">Risk Level:</span>
-                <span className={`risk-badge risk-${selectedOutbreak.riskLevel}`}>
-                  {selectedOutbreak.riskLevel.toUpperCase()}
-                </span>
-              </div>
-              <p className="outbreak-description">{selectedOutbreak.description}</p>
+          <div className="capability-item">
+            <div className="capability-number">02</div>
+            <div className="capability-content">
+              <h3>Anomaly identification</h3>
+              <p>
+                Machine learning models trained on historical outbreak data identify unusual 
+                patterns in real-time. Statistical outliers trigger immediate investigation 
+                before human analysts see the trends.
+              </p>
             </div>
-          )}
-        </div>
+          </div>
 
-        <div className="assistant-section">
-          <h2 className="section-title">Horizon Assistant</h2>
-          <HorizonAssistant />
+          <div className="capability-item">
+            <div className="capability-number">03</div>
+            <div className="capability-content">
+              <h3>Risk quantification</h3>
+              <p>
+                Every region receives a continuously updated risk score. Probability-based 
+                assessments enable proactive resource allocation and targeted interventions 
+                in high-risk areas.
+              </p>
+            </div>
+          </div>
+
+          <div className="capability-item">
+            <div className="capability-number">04</div>
+            <div className="capability-content">
+              <h3>Intelligent response</h3>
+              <p>
+                Natural language interface provides instant answers to complex questions. 
+                Decision-makers query risk factors, explore scenarios, and access insights 
+                without waiting for analyst reports.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* Impact Section */}
+      <section className="impact-section">
+        <div className="section-content-narrow">
+          <h2 className="medium-heading">
+            Built for organizations that can't afford to wait
+          </h2>
+          <div className="impact-grid">
+            <div className="impact-item">
+              <h4>Public health</h4>
+              <p>State and local agencies gain early warning systems that enable proactive containment</p>
+            </div>
+            <div className="impact-item">
+              <h4>Healthcare systems</h4>
+              <p>Hospitals optimize capacity planning and resource allocation ahead of demand surges</p>
+            </div>
+            <div className="impact-item">
+              <h4>Insurance</h4>
+              <p>Risk models incorporate real-time outbreak data for dynamic pricing and exposure management</p>
+            </div>
+            <div className="impact-item">
+              <h4>Research</h4>
+              <p>Academic institutions access rich datasets for epidemiological modeling and outbreak analysis</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="final-cta">
+        <div className="cta-content">
+          <h2 className="cta-heading">
+            See it in action
+          </h2>
+          <button 
+            className="primary-button"
+            onClick={() => navigate('/platform')}
+          >
+            Launch platform
+          </button>
+        </div>
+      </section>
     </div>
   )
 }
