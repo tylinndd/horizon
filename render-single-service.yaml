@@ -7,7 +7,17 @@ services:
     runtime: python
     plan: free
     region: oregon
-    buildCommand: cd backend && chmod +x render-build.sh && ./render-build.sh
+    buildCommand: |
+      # Install Node.js
+      curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+      apt-get install -y nodejs
+      # Build backend
+      cd backend && pip install --upgrade pip setuptools wheel
+      pip install setuptools>=65.0.0 wheel>=0.38.0
+      pip install --only-binary=:all: -r requirements.txt || pip install -r requirements.txt
+      alembic upgrade head
+      # Build frontend
+      cd ../frontend && npm install --legacy-peer-deps && npm run build
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION

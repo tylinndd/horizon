@@ -1,5 +1,5 @@
 #!/bin/bash
-# Render build script - builds both backend and frontend
+# Render build script for backend
 # This runs migrations automatically on deploy
 
 set -e
@@ -21,19 +21,7 @@ pip install --only-binary=:all: -r requirements.txt || pip install -r requiremen
 echo "Running database migrations..."
 alembic upgrade head
 
-echo "===== Building Frontend ====="
-cd ../frontend
-
-echo "Installing Node dependencies..."
-npm install --legacy-peer-deps
-
-echo "Building React app..."
-npm run build
-
-echo "Verifying build output..."
-ls -la dist/
-
 echo "================================"
-echo "✅ Build complete! Backend + Frontend ready"
+echo "✅ Backend build complete!"
 echo "================================"
 
