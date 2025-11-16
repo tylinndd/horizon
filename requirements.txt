@@ -2,6 +2,10 @@
 # This is a root-level requirements file for convenience
 # The actual dependencies are managed in backend/requirements.txt
 
+# Build Dependencies (must be first)
+setuptools>=65.0.0
+wheel>=0.38.0
+
 # FastAPI Backend Dependencies
 fastapi==0.104.1
 uvicorn[standard]==0.24.0

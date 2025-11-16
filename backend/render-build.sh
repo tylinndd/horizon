@@ -9,11 +9,13 @@ python --version
 python -c "import sys; print(f'Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')"
 echo "================================"
 
-echo "Upgrading pip..."
-pip install --upgrade pip
+echo "Upgrading pip and build tools..."
+pip install --upgrade pip setuptools wheel
 
 echo "Installing dependencies..."
-# Use --only-binary to prefer pre-built wheels and avoid compilation
+# Install setuptools and wheel first
+pip install setuptools>=65.0.0 wheel>=0.38.0
+# Then install rest of dependencies with binary wheel preference
 pip install --only-binary=:all: -r requirements.txt || pip install -r requirements.txt
 
 echo "Running database migrations..."
