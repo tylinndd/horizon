@@ -399,19 +399,19 @@ export default function Dashboard() {
               <div className="dashboard-section full-width">
                 <h2 className="section-title">Budget Overview - {emoryDashboard.facility_name}</h2>
                 <div className="budget-grid">
-                  <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget.total_budget, allocated: emoryDashboard.budget.allocated_budget, available: emoryDashboard.budget.available_budget, riskAdjusted: emoryDashboard.budget.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
+                  <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget?.total_budget, allocated: emoryDashboard.budget?.allocated_budget, available: emoryDashboard.budget?.available_budget, riskAdjusted: emoryDashboard.budget?.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
                     <div className="budget-label">Total Budget</div>
                     <div className="budget-value">{formatCurrency(emoryDashboard.budget.total_budget)}</div>
                     <div className="budget-period">Quarterly Allocation</div>
                   </div>
-                  <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget.total_budget, allocated: emoryDashboard.budget.allocated_budget, available: emoryDashboard.budget.available_budget, riskAdjusted: emoryDashboard.budget.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
+                  <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget?.total_budget, allocated: emoryDashboard.budget?.allocated_budget, available: emoryDashboard.budget?.available_budget, riskAdjusted: emoryDashboard.budget?.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
                     <div className="budget-label">Allocated</div>
                     <div className="budget-value">{formatCurrency(emoryDashboard.budget.allocated_budget)}</div>
                     <div className="budget-percentage">
                       {formatPercentage(emoryDashboard.budget.allocated_budget / emoryDashboard.budget.total_budget)}
                     </div>
                   </div>
-                  <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget.total_budget, allocated: emoryDashboard.budget.allocated_budget, available: emoryDashboard.budget.available_budget, riskAdjusted: emoryDashboard.budget.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
+                  <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget?.total_budget, allocated: emoryDashboard.budget?.allocated_budget, available: emoryDashboard.budget?.available_budget, riskAdjusted: emoryDashboard.budget?.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
                     <div className="budget-label">Available</div>
                     <div className="budget-value">{formatCurrency(emoryDashboard.budget.available_budget)}</div>
                     <div className="budget-percentage">
@@ -419,7 +419,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   {emoryDashboard.budget.risk_adjusted_budget && (
-                    <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget.total_budget, allocated: emoryDashboard.budget.allocated_budget, available: emoryDashboard.budget.available_budget, riskAdjusted: emoryDashboard.budget.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
+                    <div className="budget-card" style={{ cursor: 'pointer' }} onClick={() => openBudgetModal({ total: emoryDashboard.budget?.total_budget, allocated: emoryDashboard.budget?.allocated_budget, available: emoryDashboard.budget?.available_budget, riskAdjusted: emoryDashboard.budget?.risk_adjusted_budget, period: 'Quarterly Allocation' })}>
                       <div className="budget-label">Risk-Adjusted Budget</div>
                       <div className="budget-value">{formatCurrency(emoryDashboard.budget.risk_adjusted_budget)}</div>
                       <div className="budget-note">Based on current risk level</div>

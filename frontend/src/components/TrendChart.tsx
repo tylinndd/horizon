@@ -37,7 +37,7 @@ export default function TrendChart() {
       // Get available regions from latest scores
       const latestResponse = await getLatestRiskScores()
       const regions = [...new Set((latestResponse.scores || []).map((s: RiskDataPoint) => s.region_id))]
-      setAvailableRegions(regions)
+      setAvailableRegions(regions as string[])
 
       // Group by date and calculate average risk
       const grouped: { [key: string]: { count: number; total: number } } = {}
