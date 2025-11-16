@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+// Use relative path when served from same domain, or environment variable for separate deployment
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 const api = axios.create({
