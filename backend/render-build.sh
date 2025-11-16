@@ -4,6 +4,11 @@
 
 set -e
 
+echo "===== Python Version Check ====="
+python --version
+python -c "import sys; print(f'Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')"
+echo "================================"
+
 echo "Upgrading pip..."
 pip install --upgrade pip
 
