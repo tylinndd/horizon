@@ -7,7 +7,26 @@ interface Message {
   content: string
 }
 
-export default function HorizonAssistant() {
+// Minimal shape for context passed from Dashboard
+interface HorizonAssistantContext {
+  riskScores?: Array<{
+    region_id: string
+    risk_probability: number
+    risk_level: string
+    contributing_factors?: string
+  }>
+  alerts?: Array<{
+    region_id: string
+    severity: string
+    title: string
+  }>
+}
+
+interface HorizonAssistantProps {
+  context?: HorizonAssistantContext
+}
+
+export default function HorizonAssistant({ context }: HorizonAssistantProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
@@ -58,8 +77,29 @@ export default function HorizonAssistant() {
     setInput('')
     setLoading(true)
 
+    // Build a compact context snapshot from the props
+    const contextPayload: Record<string, any> | undefined = context
+      ? {
+          riskScores: context.riskScores
+            ?.slice(0, 10)
+            .map((r) => ({
+              region_id: r.region_id,
+              risk_probability: r.risk_probability,
+              risk_level: r.risk_level,
+              contributing_factors: r.contributing_factors,
+            })),
+          alerts: context.alerts
+            ?.slice(0, 5)
+            .map((a) => ({
+              region_id: a.region_id,
+              severity: a.severity,
+              title: a.title,
+            })),
+        }
+      : undefined
+
     try {
-      const response = await queryLLM(userInput)
+      const response = await queryLLM(userInput, contextPayload)
       const assistantMessage: Message = { role: 'assistant', content: response.response }
       setMessages((prev) => [...prev, assistantMessage])
     } catch (error: any) {

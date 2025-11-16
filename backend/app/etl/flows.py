@@ -10,6 +10,7 @@ from app.core.database import SessionLocal
 from app.models.health_metrics import SearchTrend, PharmacyAggregate, HospitalUtilization, OWIDCovidMetric
 from typing import List, Dict
 import logging
+from pytrends.request import TrendReq
 
 logger = logging.getLogger(__name__)
 
@@ -63,21 +64,53 @@ def load_owid_data_to_db(df: pd.DataFrame):
 
 @task
 def fetch_google_trends(regions: List[str], keywords: List[str]) -> List[Dict]:
-    """Fetch Google Trends data (simplified - in production use pytrends)"""
-    # This is a placeholder - in production, use pytrends library
+    """
+    Fetch Google Trends data using pytrends.
+    
+    For each region and keyword, we pull recent interest-over-time values
+    and convert them into SearchTrend-like dicts.
+    """
     logger.info(f"Fetching Google Trends for {len(regions)} regions and {len(keywords)} keywords")
     
-    # Simulated data for now
-    trends = []
-    for region in regions:
-        for keyword in keywords:
-            trends.append({
-                'region_id': region,
-                'keyword': keyword,
-                'search_index': 50.0,  # Placeholder
-                'timestamp': datetime.now(timezone.utc)
-            })
+    trends: List[Dict] = []
+    try:
+        # Initialize pytrends client once
+        pytrends = TrendReq(hl="en-US", tz=360)
+        
+        # Use a recent timeframe (last 7 days) for near real-time signals
+        timeframe = "now 7-d"
+        
+        for region in regions:
+            # Build payload for all keywords at once for this region
+            pytrends.build_payload(
+                kw_list=keywords,
+                timeframe=timeframe,
+                geo=region
+            )
+            df = pytrends.interest_over_time()
+            
+            if df.empty:
+                logger.warning(f"No Google Trends data returned for region {region}")
+                continue
+            
+            # Convert each row into individual trend records per keyword
+            for ts, row in df.iterrows():
+                # skip partial columns like "isPartial"
+                for keyword in keywords:
+                    if keyword not in row:
+                        continue
+                    search_index = float(row[keyword])
+                    trends.append({
+                        "region_id": region,
+                        "keyword": keyword,
+                        "search_index": search_index,
+                        "timestamp": ts.to_pydatetime().replace(tzinfo=timezone.utc),
+                    })
+    except Exception as e:
+        logger.error(f"Error fetching Google Trends data via pytrends: {e}")
+        raise
     
+    logger.info(f"Fetched {len(trends)} Google Trends records")
     return trends
 
 
@@ -160,8 +193,69 @@ def ingest_public_data_flow():
         logger.error(f"OWID ingestion failed: {e}")
     
     # Fetch and load Google Trends
-    regions = ['US-CA', 'US-NY', 'US-TX', 'US-FL']
-    keywords = ['fever', 'cough', 'flu symptoms', 'shortness of breath']
+    regions = [
+        "US-AL",
+        "US-AK",
+        "US-AZ",
+        "US-AR",
+        "US-CA",
+        "US-CO",
+        "US-CT",
+        "US-DE",
+        "US-FL",
+        "US-GA",
+        "US-HI",
+        "US-ID",
+        "US-IL",
+        "US-IN",
+        "US-IA",
+        "US-KS",
+        "US-KY",
+        "US-LA",
+        "US-ME",
+        "US-MD",
+        "US-MA",
+        "US-MI",
+        "US-MN",
+        "US-MS",
+        "US-MO",
+        "US-MT",
+        "US-NE",
+        "US-NV",
+        "US-NH",
+        "US-NJ",
+        "US-NM",
+        "US-NY",
+        "US-NC",
+        "US-ND",
+        "US-OH",
+        "US-OK",
+        "US-OR",
+        "US-PA",
+        "US-RI",
+        "US-SC",
+        "US-SD",
+        "US-TN",
+        "US-TX",
+        "US-UT",
+        "US-VT",
+        "US-VA",
+        "US-WA",
+        "US-WV",
+        "US-WI",
+        "US-WY",
+        "US-DC",
+    ]
+    keywords = [
+        "fever",
+        "cough",
+        "flu symptoms",
+        "shortness of breath",
+        "covid symptoms",
+        "sore throat",
+        "body aches",
+        "loss of taste",
+    ]
     
     try:
         trends = fetch_google_trends(regions, keywords)

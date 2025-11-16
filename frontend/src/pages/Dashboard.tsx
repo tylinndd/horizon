@@ -103,7 +103,12 @@ export default function Dashboard() {
 
         <div className="dashboard-section full-width">
           <h2 className="section-title">Horizon Assistant</h2>
-          <HorizonAssistant />
+          <HorizonAssistant
+            context={{
+              riskScores,
+              alerts,
+            }}
+          />
         </div>
       </div>
     </div>

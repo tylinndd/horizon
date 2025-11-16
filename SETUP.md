@@ -53,10 +53,10 @@ docker compose exec backend python scripts/seed_data.py
 
 ### Backend
 
-1. **Create virtual environment:**
+1. **Create virtual environment (Python 3.11 recommended):**
 ```bash
 cd backend
-python -m venv venv
+python3.11 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 

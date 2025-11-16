@@ -1,6 +1,22 @@
 # Deploying Horizon to Render
 
-Render supports native deployments without Docker. Here's how to deploy Horizon to Render.
+Render supports native deployments without Docker. This guide captures the **step‑by‑step instructions** to deploy the current Horizon app (backend + frontend + database) to Render.
+
+---
+
+## Quick Start Checklist
+
+1. **Fork/Connect repo** to Render (GitHub/GitLab).
+2. **Create PostgreSQL DB** in Render, enable `timescaledb` extension.
+3. **Create backend web service** (`horizon-backend`) using Python environment.
+4. **Create frontend static site** (`horizon-frontend`) using the Vite build.
+5. **Set environment variables**:
+   - Backend: `DATABASE_URL`, `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, `SECRET_KEY`, `CORS_ORIGINS`.
+   - Frontend: `VITE_API_URL` pointing to the backend `/api` URL.
+6. **Run migrations** (`alembic upgrade head`) from the backend Shell on first deploy.
+7. (Optional) **Seed or ingest data** using the scripts in `backend/scripts/` (e.g., `fetch_real_data.py`, `ingest_local_datasets.py`).
+
+---
 
 ## Overview
 

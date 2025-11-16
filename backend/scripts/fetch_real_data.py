@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.models.health_metrics import OWIDCovidMetric, SearchTrend, PharmacyAggregate
 from app.models.risk_scores import RiskScore
+from pytrends.request import TrendReq
 import random
 
 def fetch_owid_data():
@@ -129,30 +130,109 @@ def generate_risk_scores_from_real_data():
         db.close()
 
 def update_search_trends():
-    """Update search trends (using synthetic data until Google Trends API is set up)"""
-    print("Updating search trends data...")
+    """Update search trends using live Google Trends data via pytrends."""
+    print("Updating search trends data from Google Trends...")
     db: Session = SessionLocal()
     
     try:
-        regions = ['US-CA', 'US-NY', 'US-TX', 'US-FL', 'US-IL']
-        keywords = ['fever', 'cough', 'flu symptoms', 'covid symptoms']
-        now = datetime.now(timezone.utc)
+        regions = [
+            "US-AL",
+            "US-AK",
+            "US-AZ",
+            "US-AR",
+            "US-CA",
+            "US-CO",
+            "US-CT",
+            "US-DE",
+            "US-FL",
+            "US-GA",
+            "US-HI",
+            "US-ID",
+            "US-IL",
+            "US-IN",
+            "US-IA",
+            "US-KS",
+            "US-KY",
+            "US-LA",
+            "US-ME",
+            "US-MD",
+            "US-MA",
+            "US-MI",
+            "US-MN",
+            "US-MS",
+            "US-MO",
+            "US-MT",
+            "US-NE",
+            "US-NV",
+            "US-NH",
+            "US-NJ",
+            "US-NM",
+            "US-NY",
+            "US-NC",
+            "US-ND",
+            "US-OH",
+            "US-OK",
+            "US-OR",
+            "US-PA",
+            "US-RI",
+            "US-SC",
+            "US-SD",
+            "US-TN",
+            "US-TX",
+            "US-UT",
+            "US-VT",
+            "US-VA",
+            "US-WA",
+            "US-WV",
+            "US-WI",
+            "US-WY",
+            "US-DC",
+        ]
+        keywords = [
+            "fever",
+            "cough",
+            "flu symptoms",
+            "shortness of breath",
+            "covid symptoms",
+            "sore throat",
+            "body aches",
+            "loss of taste",
+        ]
         
+        # Initialize pytrends client
+        pytrends = TrendReq(hl='en-US', tz=360)
+        timeframe = 'now 7-d'
+        
+        updated_records = 0
         for region in regions:
-            for keyword in keywords:
-                # Generate search index based on time of year and random variation
-                base_index = 50
-                seasonal_factor = 1.2  # Winter months see more searches
-                trend = SearchTrend(
-                    region_id=region,
-                    keyword=keyword,
-                    search_index=base_index * seasonal_factor * random.uniform(0.8, 1.5),
-                    timestamp=now
-                )
-                db.merge(trend)
+            # Build payload for all keywords for this region
+            pytrends.build_payload(
+                kw_list=keywords,
+                timeframe=timeframe,
+                geo=region
+            )
+            df = pytrends.interest_over_time()
+            
+            if df.empty:
+                print(f"  - No Google Trends data returned for region {region}")
+                continue
+            
+            for ts, row in df.iterrows():
+                for keyword in keywords:
+                    if keyword not in row:
+                        continue
+                    search_index = float(row[keyword])
+                    trend = SearchTrend(
+                        region_id=region,
+                        keyword=keyword,
+                        search_index=search_index,
+                        timestamp=ts.to_pydatetime().replace(tzinfo=timezone.utc)
+                    )
+                    db.merge(trend)
+                    updated_records += 1
         
         db.commit()
-        print(f"✓ Updated search trends for {len(regions)} regions")
+        print(f"✓ Updated search trends from Google Trends ({updated_records} records)")
         
     except Exception as e:
         db.rollback()
