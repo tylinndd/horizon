@@ -4,8 +4,12 @@
 
 set -e
 
+echo "Upgrading pip..."
+pip install --upgrade pip
+
 echo "Installing dependencies..."
-pip install -r requirements.txt
+# Use --only-binary to prefer pre-built wheels and avoid compilation
+pip install --only-binary=:all: -r requirements.txt || pip install -r requirements.txt
 
 echo "Running database migrations..."
 alembic upgrade head
