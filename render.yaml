@@ -1,7 +1,7 @@
 services:
   - type: web
     name: horizon-backend
-    runtime: python
+    env: python
     plan: free
     region: oregon
     buildCommand: cd backend && chmod +x render-build.sh && ./render-build.sh
@@ -10,7 +10,7 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: DATABASE_URL
-        sync: false  # Set this to your Supabase connection string
+        sync: false
       - key: OPENROUTER_API_KEY
         sync: false
       - key: OPENROUTER_MODEL
@@ -20,9 +20,8 @@ services:
       - key: CORS_ORIGINS
         value: https://horizon-frontend.onrender.com
 
-  - type: web
+  - type: static
     name: horizon-frontend
-    env: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     envVars:
