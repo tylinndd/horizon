@@ -82,5 +82,54 @@ export const queryLLM = async (query: string, context?: Record<string, any>) => 
   return response.data
 }
 
+// Hospital API endpoints
+export interface HospitalDashboard {
+  facility_id: string
+  facility_name: string
+  region_id: string
+  budget: {
+    id: number
+    total_budget: number
+    allocated_budget: number
+    available_budget: number
+    risk_adjusted_budget: number | null
+    recommended_allocation: any
+    timestamp: string
+  } | null
+  risk_score: {
+    risk_level: string
+    risk_probability: number
+    contributing_factors: string
+    timestamp: string
+  } | null
+  resource_allocations: Array<{
+    id: number
+    resource_type: string
+    current_capacity: number
+    recommended_capacity: number
+    utilization_rate: number
+    priority_level: string
+    allocation_reason: string | null
+  }>
+  recommendations: Array<{
+    id: number
+    title: string
+    description: string
+    priority: string
+    recommendation_type: string
+    estimated_impact: string | null
+    estimated_cost: number | null
+    estimated_savings: number | null
+    timeframe: string | null
+  }>
+}
+
+export const getHospitalDashboard = async (facilityId: string, tenantId?: number) => {
+  const response = await api.get('/hospital/dashboard', {
+    params: { facility_id: facilityId, tenant_id: tenantId },
+  })
+  return response.data as HospitalDashboard
+}
+
 export default api
 

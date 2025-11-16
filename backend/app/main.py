@@ -4,7 +4,7 @@ Main application entry point
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import health, risk, alerts, fintech, llm
+from app.api import health, risk, alerts, fintech, llm, hospital
 from app.core.config import settings
 
 app = FastAPI(
@@ -28,6 +28,7 @@ app.include_router(risk.router, prefix="/api/risk", tags=["risk"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["alerts"])
 app.include_router(fintech.router, prefix="/api/fintech", tags=["fintech"])
 app.include_router(llm.router, prefix="/api/llm", tags=["llm"])
+app.include_router(hospital.router, prefix="/api/hospital", tags=["hospital"])
 
 
 @app.get("/")

@@ -1,11 +1,22 @@
-import { Alert } from '../pages/Dashboard'
 import './AlertCard.css'
+
+interface Alert {
+  id: number
+  region_id: string
+  alert_type: string
+  severity: string
+  title: string
+  message: string
+  is_read: boolean
+  created_at: string
+}
 
 interface AlertCardProps {
   alert: Alert
+  onClick?: () => void
 }
 
-export default function AlertCard({ alert }: AlertCardProps) {
+export default function AlertCard({ alert, onClick }: AlertCardProps) {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
@@ -20,7 +31,11 @@ export default function AlertCard({ alert }: AlertCardProps) {
   }
 
   return (
-    <div className="alert-card" style={{ borderLeftColor: getSeverityColor(alert.severity) }}>
+    <div 
+      className="alert-card" 
+      style={{ borderLeftColor: getSeverityColor(alert.severity), cursor: onClick ? 'pointer' : 'default' }}
+      onClick={onClick}
+    >
       <div className="alert-header">
         <div>
           <h4 className="alert-title">{alert.title}</h4>

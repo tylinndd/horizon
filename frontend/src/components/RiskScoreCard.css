@@ -1,70 +1,71 @@
 .risk-score-card {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray-light);
-  border-left: 4px solid;
-  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-left: 3px solid #e5e5e5;
+  border-radius: 6px;
   padding: 1.25rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
 .risk-score-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  background-color: var(--color-gray-hover);
+  border-color: #d4d4d4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .risk-score-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .risk-region {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: var(--color-black);
+  color: #000000;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .risk-badge {
-  padding: 0.25rem 0.75rem;
+  padding: 0.35rem 0.85rem;
   border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: bold;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.risk-critical {
+.risk-badge.risk-critical {
   background-color: var(--color-red);
-  color: var(--color-white);
+  color: #ffffff;
 }
 
-.risk-high {
+.risk-badge.risk-high {
   background-color: var(--color-orange);
-  color: var(--color-white);
+  color: #ffffff;
 }
 
-.risk-medium {
-  background-color: #facc15;
-  color: var(--color-black);
+.risk-badge.risk-medium {
+  background-color: #fbbf24;
+  color: #000000;
 }
 
-.risk-low {
-  background-color: var(--color-gray);
-  color: var(--color-white);
+.risk-badge.risk-low {
+  background-color: #e5e5e5;
+  color: #737373;
 }
 
 .risk-probability {
   font-size: 2rem;
-  font-weight: bold;
-  color: var(--color-black);
-  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
 }
 
 .risk-factors {
-  font-size: 0.875rem;
-  color: var(--color-gray-dark);
-  line-height: 1.5;
+  font-size: 0.85rem;
+  color: #737373;
+  line-height: 1.6;
 }
-

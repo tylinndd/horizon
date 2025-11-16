@@ -51,6 +51,10 @@ hackathon-prep:
 	@echo "Preparing Horizon for hackathon demo..."
 	cd backend && venv/bin/python scripts/prepare_hackathon_demo.py --mode hybrid --include-local
 
+mock-data-extensive:
+	@echo "Generating extensive realistic mock data..."
+	cd backend && venv/bin/python scripts/generate_extensive_mock_data.py
+
 clean:
 	docker compose down -v || docker-compose down -v
 	docker system prune -f

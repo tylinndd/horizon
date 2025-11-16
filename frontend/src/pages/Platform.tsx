@@ -221,6 +221,29 @@ export default function Platform() {
             </div>
           </div>
         )}
+
+        {/* Risk Level Legend */}
+        <div className="globe-legend">
+          <div className="legend-title">Risk Level</div>
+          <div className="legend-items">
+            <div className="legend-item">
+              <div className="legend-dot" style={{ backgroundColor: '#dc2626' }}></div>
+              <span>Critical</span>
+            </div>
+            <div className="legend-item">
+              <div className="legend-dot" style={{ backgroundColor: '#f97316' }}></div>
+              <span>High</span>
+            </div>
+            <div className="legend-item">
+              <div className="legend-dot" style={{ backgroundColor: '#facc15' }}></div>
+              <span>Medium</span>
+            </div>
+            <div className="legend-item">
+              <div className="legend-dot" style={{ backgroundColor: '#737373' }}></div>
+              <span>Low</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

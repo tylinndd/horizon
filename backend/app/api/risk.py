@@ -66,21 +66,50 @@ async def get_latest_risk_scores(
     db: Session = Depends(get_db)
 ):
     """Get latest risk scores for all regions"""
-    # Get the most recent timestamp
+    # Get the latest score for each region
+    # Use a subquery to find the max timestamp per region
+    from sqlalchemy import and_
+    
+    subquery = db.query(
+        RiskScore.region_id,
+        func.max(RiskScore.timestamp).label('max_timestamp')
+    )
+    if tenant_id:
+        subquery = subquery.filter(RiskScore.tenant_id == tenant_id)
+    subquery = subquery.group_by(RiskScore.region_id).subquery()
+    
+    # Join with RiskScore to get the full records
+    # Use distinct on region_id to handle cases where multiple scores exist at same timestamp
+    from sqlalchemy import distinct
+    
+    query = db.query(RiskScore).join(
+        subquery,
+        and_(
+            RiskScore.region_id == subquery.c.region_id,
+            RiskScore.timestamp == subquery.c.max_timestamp
+        )
+    )
+    if tenant_id:
+        query = query.filter(RiskScore.tenant_id == tenant_id)
+    
+    # Order by region_id and id to ensure consistent results, then get distinct regions
+    query = query.order_by(RiskScore.region_id, RiskScore.id.desc())
+    scores = query.all()
+    
+    # Remove duplicates by region_id (keep first occurrence which is most recent due to ordering)
+    seen_regions = set()
+    unique_scores = []
+    for score in scores:
+        if score.region_id not in seen_regions:
+            unique_scores.append(score)
+            seen_regions.add(score.region_id)
+    scores = unique_scores
+    
+    # Get the overall latest timestamp for the response
     latest_query = db.query(func.max(RiskScore.timestamp))
     if tenant_id:
         latest_query = latest_query.filter(RiskScore.tenant_id == tenant_id)
     latest_timestamp = latest_query.scalar()
-    
-    if not latest_timestamp:
-        return {"scores": []}
-    
-    # Get all scores at that timestamp
-    query = db.query(RiskScore).filter(RiskScore.timestamp == latest_timestamp)
-    if tenant_id:
-        query = query.filter(RiskScore.tenant_id == tenant_id)
-    
-    scores = query.all()
     
     return {
         "timestamp": latest_timestamp.isoformat() if latest_timestamp else None,

@@ -115,24 +115,6 @@ export default function RiskMap() {
               </div>
             ))}
           </div>
-          <div className="map-legend">
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#dc2626' }}></div>
-              <span>Critical</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#f97316' }}></div>
-              <span>High</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#facc15' }}></div>
-              <span>Medium</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color" style={{ backgroundColor: '#737373' }}></div>
-              <span>Low</span>
-            </div>
-          </div>
         </div>
 
         {selectedScore && selectedOutbreak && (
@@ -165,6 +147,33 @@ export default function RiskMap() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Legend at bottom of screen */}
+      <div className="map-legend-bottom">
+        <div className="legend-title">Risk Severity Key</div>
+        <div className="legend-items">
+          <div className="legend-item">
+            <div className="legend-color" style={{ backgroundColor: '#dc2626' }}></div>
+            <span className="legend-label">Critical</span>
+            <span className="legend-description">(75%+)</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color" style={{ backgroundColor: '#f97316' }}></div>
+            <span className="legend-label">High</span>
+            <span className="legend-description">(55-74%)</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color" style={{ backgroundColor: '#facc15' }}></div>
+            <span className="legend-label">Medium</span>
+            <span className="legend-description">(35-54%)</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color" style={{ backgroundColor: '#737373' }}></div>
+            <span className="legend-label">Low</span>
+            <span className="legend-description">(&lt;35%)</span>
+          </div>
+        </div>
       </div>
     </div>
   )

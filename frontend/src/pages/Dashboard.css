@@ -1,78 +1,467 @@
 .dashboard {
   width: 100%;
-  background-color: var(--color-gray-bg);
+  background-color: #fafafa;
   min-height: calc(100vh - 80px);
-  padding: 2rem 0;
+  padding: 3rem 2rem;
 }
 
 .dashboard-title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 2rem;
-  color: var(--color-black);
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin-bottom: 3rem;
+  color: #000000;
+  letter-spacing: -0.02em;
 }
 
 .dashboard-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Overview Row - Risk and Alerts side by side */
+.overview-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
 }
 
 .dashboard-section {
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray-light);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 2rem;
+  transition: all 0.2s ease;
 }
 
 .dashboard-section:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  background-color: var(--color-gray-hover);
+  border-color: #d4d4d4;
 }
 
 .dashboard-section.full-width {
-  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: var(--color-black);
-  border-bottom: 2px solid var(--color-red);
-  padding-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #000000 !important;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::before {
+  content: '';
+  width: 3px;
+  height: 1.5rem;
+  background-color: var(--color-red);
+  border-radius: 2px;
 }
 
 .risk-cards {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .alerts-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .empty-state {
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
-  color: var(--color-gray);
+  color: #737373;
+  font-size: 0.95rem;
 }
 
 .loading {
   text-align: center;
-  padding: 3rem;
+  padding: 4rem;
+  font-size: 1.1rem;
+  color: #737373;
+}
+
+/* Emory Hospital Section Styles */
+.emory-header-section {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #e5e5e5;
+}
+
+.emory-header-section .section-title {
+  color: #000000 !important;
+}
+
+.emory-header-section .section-title::before {
+  background-color: var(--color-red);
+}
+
+.emory-subtitle {
+  color: #000000 !important;
+  margin: 0.5rem 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.budget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.budget-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1.75rem;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.budget-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.budget-card.risk-adjusted {
+  border: 1px solid #e5e5e5;
+  background-color: #ffffff !important;
+}
+
+.budget-card.risk-adjusted .budget-value {
+  color: #000000 !important;
+}
+
+.budget-label {
+  font-size: 0.8rem;
+  color: #737373 !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.budget-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #000000 !important;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.budget-period,
+.budget-percentage,
+.budget-note {
+  font-size: 0.85rem;
+  color: #000000 !important;
+  font-weight: 400;
+}
+
+.recommendations-box {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #ffffff !important;
+  border: none;
+  border-radius: 6px;
+}
+
+.recommendations-box h3 {
+  font-size: 1.1rem;
+  margin: 0 0 1.25rem 0;
+  color: #000000 !important;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recommendation-item {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e5e5;
+  border-left: 3px solid var(--color-red) !important;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.recommendation-item:hover {
+  border-color: #d4d4d4;
+  border-left-color: var(--color-red) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.rec-category {
+  font-weight: 600;
+  color: #000000 !important;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.rec-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.rec-current,
+.rec-recommended {
+  font-size: 0.9rem;
+  color: #000000 !important;
+}
+
+.rec-recommended {
+  color: #000000 !important;
+  font-weight: 600;
+}
+
+.rec-arrow {
+  color: #737373;
+}
+
+.rec-reason {
+  font-size: 0.85rem;
+  color: #000000 !important;
+  line-height: 1.5;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.resource-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1.75rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.resource-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.resource-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.resource-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #000000 !important;
+  letter-spacing: 0.5px;
+}
+
+.resource-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  color: #737373 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.metric-value {
   font-size: 1.25rem;
-  color: var(--color-gray);
+  font-weight: 600;
+  color: #000000 !important;
+  letter-spacing: -0.01em;
+}
+
+.metric-value.recommended {
+  color: var(--color-red);
+}
+
+.utilization-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #e5e5e5;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.utilization-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.recommendation-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1.75rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.rec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.rec-header h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+  color: #000000 !important;
+  flex: 1;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+.rec-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.rec-description {
+  color: #000000 !important;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.rec-impact,
+.rec-financials,
+.rec-timeframe {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e5e5;
+  font-size: 0.85rem;
+  color: #000000;
+}
+
+.rec-financials {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.rec-cost {
+  color: #ea580c !important;
+}
+
+.rec-savings {
+  color: #16a34a !important;
+}
+
+/* Scrollbar styling */
+.risk-cards::-webkit-scrollbar,
+.alerts-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.risk-cards::-webkit-scrollbar-track,
+.alerts-list::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.risk-cards::-webkit-scrollbar-thumb,
+.alerts-list::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 3px;
+}
+
+.risk-cards::-webkit-scrollbar-thumb:hover,
+.alerts-list::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
+
+@media (max-width: 1024px) {
+  .overview-row {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-cards,
+  .alerts-list {
+    max-height: 300px;
+  }
 }
 
 @media (max-width: 768px) {
-  .dashboard-grid {
+  .dashboard {
+    padding: 2rem 1rem;
+  }
+
+  .dashboard-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .overview-row {
     grid-template-columns: 1fr;
+  }
+
+  .budget-grid,
+  .resources-grid,
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-section {
+    padding: 1.5rem;
   }
 }
 

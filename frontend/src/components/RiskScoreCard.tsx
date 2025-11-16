@@ -1,11 +1,19 @@
-import { RiskScore } from '../pages/Dashboard'
 import './RiskScoreCard.css'
+
+interface RiskScore {
+  id: number
+  region_id: string
+  risk_probability: number
+  risk_level: string
+  contributing_factors?: string
+}
 
 interface RiskScoreCardProps {
   score: RiskScore
+  onClick?: () => void
 }
 
-export default function RiskScoreCard({ score }: RiskScoreCardProps) {
+export default function RiskScoreCard({ score, onClick }: RiskScoreCardProps) {
   const getRiskColor = (level: string) => {
     switch (level) {
       case 'critical':
@@ -20,7 +28,11 @@ export default function RiskScoreCard({ score }: RiskScoreCardProps) {
   }
 
   return (
-    <div className="risk-score-card" style={{ borderLeftColor: getRiskColor(score.risk_level) }}>
+    <div 
+      className="risk-score-card" 
+      style={{ borderLeftColor: getRiskColor(score.risk_level), cursor: onClick ? 'pointer' : 'default' }}
+      onClick={onClick}
+    >
       <div className="risk-score-header">
         <h3 className="risk-region">{score.region_id}</h3>
         <span className={`risk-badge risk-${score.risk_level}`}>

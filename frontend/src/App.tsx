@@ -5,6 +5,7 @@ import Homepage from './pages/Homepage'
 import Platform from './pages/Platform'
 import Dashboard from './pages/Dashboard'
 import Alerts from './pages/Alerts'
+import EmoryHospital from './pages/EmoryHospital'
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/platform" element={<Platform />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/alerts" element={<Alerts />} />
+          <Route path="/hospital/emory" element={<EmoryHospital />} />
         </Routes>
       </Layout>
     </Router>
