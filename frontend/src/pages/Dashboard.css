@@ -177,14 +177,16 @@
   background-color: #ffffff !important;
   border: none;
   border-radius: 6px;
+  
+}
+
+.recommendations-box h3 {
   font-size: 1.1rem;
   margin: 0 0 1.25rem 0;
   color: #000000 !important;
   font-weight: 500;
   letter-spacing: -0.01em;
 }
-
-
 
 .recommendations-list {
   display: flex;
