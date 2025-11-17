@@ -1,10 +1,12 @@
 services:
   - type: web
-    name: horizon-backend
+    name: horizon-app
     env: python
     plan: free
     region: oregon
-    buildCommand: cd backend && chmod +x render-build.sh && ./render-build.sh
+    buildCommand: |
+      apt-get update && apt-get install -y nodejs npm
+      cd backend && chmod +x render-build.sh && ./render-build.sh
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
@@ -18,16 +20,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: CORS_ORIGINS
-        value: https://horizon-frontend.onrender.com
-
-  - type: web
-    name: horizon-frontend
-    env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://horizon-backend.onrender.com/api
+        value: https://horizon-app.onrender.com
 
 # Using external Supabase database - no Render database needed
 # databases:
